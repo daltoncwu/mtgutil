@@ -9,6 +9,8 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class MtgGoldfishParser {
@@ -27,7 +29,8 @@ public class MtgGoldfishParser {
 
         String outputDirectory = null;
         if (filePath != null) {
-            outputDirectory = filePath + "/mtgutil-" + mtgFormat;
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+            outputDirectory = String.format(filePath + "/mtgutil-%s-%s", mtgFormat, timestamp);
             new File(outputDirectory).mkdirs();
         }
 
