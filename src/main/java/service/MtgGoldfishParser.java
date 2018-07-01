@@ -39,7 +39,14 @@ public class MtgGoldfishParser {
         Elements cardQuantities = document.select(deckBaseQuery + " td.deck-col-qty");
         Elements cards = document.select(deckBaseQuery + " td.deck-col-card > a");
 
-        for (int i = 0; i < cards.size(); i++) {
+        int maxIndex;//Only increment i to the max index of the smaller of the two Lists
+        if (cardQuantities.size() < cards.size()) {
+            maxIndex = cardQuantities.size();
+        } else {
+            maxIndex = cards.size();
+        }
+
+        for (int i = 0; i < maxIndex; i++) {
             System.out.println(cardQuantities.get(i).text() + " " + cards.get(i).text());
         }
     }
