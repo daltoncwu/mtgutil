@@ -155,7 +155,7 @@ public class MtgGoldfishParser {
 
     private static String getLastUrlSegment(String url) {
         if (url == null || !url.contains("/")) {
-            return "";
+            return url;
         }
 
         String[] linkUrlSegments = url.split("/");
