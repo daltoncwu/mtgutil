@@ -18,6 +18,7 @@ public class Driver {
         try {
             MtgFormat mtgFormat = MtgFormat.STANDARD;
             //MtgFormat mtgFormat = MtgFormat.MODERN;
+            
             MtgGoldfishParser.parseTopDecks(mtgFormat, filePath);
         } catch (IOException e) {
             System.out.println("Failed to parse the top decks.");

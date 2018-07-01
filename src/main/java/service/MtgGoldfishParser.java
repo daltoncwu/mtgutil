@@ -17,6 +17,7 @@ public class MtgGoldfishParser {
 
     public static final String MTG_GOLDFISH_BASE_URL = "https://www.mtggoldfish.com";
     public static final String MTG_GOLDFISH_METAGAME_URL = "https://www.mtggoldfish.com/metagame/";
+    public static final String SIDEBOARD_PREFIX = "SB: ";
 
     public static void parseTopDecks(MtgFormat mtgFormat, String filePath) throws IOException {
         String url = MTG_GOLDFISH_METAGAME_URL + mtgFormat;
@@ -36,11 +37,11 @@ public class MtgGoldfishParser {
 
         for (Element link : links) {
             if (!isDuplicateLink(link)) {//Only parse the deck links that aren't duplicates containing tags
+
                 String linkUrl = link.attr("href");
-                String[] linkUrlSegments = linkUrl.split("/");
-                String deckName = linkUrlSegments[linkUrlSegments.length-1];
+                String deckName = parseDeckName(linkUrl);
                 String deckUrl = MTG_GOLDFISH_BASE_URL + linkUrl;
-                System.out.println(deckUrl);
+                System.out.println("Retrieving deck: " + deckUrl);
 
                 try {
                     TimeUnit.SECONDS.sleep(1);//politely throttle our requests
@@ -62,23 +63,41 @@ public class MtgGoldfishParser {
     public static void parseDeck(String url, PrintWriter printWriter) throws IOException {
         Document document = Jsoup.connect(url).get();
 
-        String deckBaseQuery = "table.deck-view-deck-table tr";
+        String deckBaseQuery = "table.deck-view-deck-table";
 
-        Elements cardQuantities = document.select(deckBaseQuery + " td.deck-col-qty");
-        Elements cards = document.select(deckBaseQuery + " td.deck-col-card > a");
+        Elements decks = document.select(deckBaseQuery);//This will return 3 copies of the same deck: paper, online, and arena
+        Element deck = decks.get(0);//Just use the first copy of the deck
+        Element tableBody = deck.children().get(0);//Just get the elements from the first tbody tag
+        Elements tableRows = tableBody.children();
 
-        int maxIndex;//Only increment i to the max index of the smaller of the two Lists
-        if (cardQuantities.size() < cards.size()) {
-            maxIndex = cardQuantities.size();
-        } else {
-            maxIndex = cards.size();
-        }
+        boolean isSideboard = false;//Toggles to true when the sideboard card lines are reached
+        for (Element tableRow : tableRows) {
+            Elements tableCells = tableRow.children();
 
-        for (int i = 0; i < maxIndex; i++) {
-            if (printWriter == null) {
-                System.out.println(cardQuantities.get(i).text() + " " + cards.get(i).text());
-            } else {
-                printWriter.println(cardQuantities.get(i).text() + " " + cards.get(i).text());
+            Elements deckHeaders = tableCells.select("td.deck-header");
+            for (Element deckHeader : deckHeaders) {
+                if (deckHeader.text().contains("Sideboard")) {
+                    isSideboard = true;
+                }
+            }
+
+            Elements quantitys = tableCells.select("td.deck-col-qty");
+            Elements cardNames = tableCells.select("td.deck-col-card > a");
+
+            if (!quantitys.isEmpty() && !cardNames.isEmpty()) {
+                Element quantity = quantitys.get(0);
+                Element cardName = cardNames.get(0);
+                String line = "";
+                if (isSideboard) {
+                    line = line + SIDEBOARD_PREFIX;
+                }
+                line = line + quantity.text() + " " + cardName.text();
+
+                if (printWriter == null) {
+                    System.out.println(line);
+                } else {
+                    printWriter.println(line);
+                }
             }
         }
     }
@@ -96,5 +115,10 @@ public class MtgGoldfishParser {
         } else {
             return false;
         }
+    }
+
+    private static String parseDeckName(String url) {
+        String[] linkUrlSegments = url.split("/");
+        return linkUrlSegments[linkUrlSegments.length-1];
     }
 }
