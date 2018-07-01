@@ -30,8 +30,18 @@ public class MtgGoldfishParser {
     }
 
     //TODO: Implement this and test parsing a single deck first from the Driver before looping through all decks
-    public static void parseDeck(String url) {
+    public static void parseDeck(String url) throws IOException {
+        String temp = "https://www.mtggoldfish.com/archetype/standard-r-b-aggro-51029";//TODO: this is for temporary testing
+        Document document = Jsoup.connect(temp).get();
 
+        String deckBaseQuery = "table.deck-view-deck-table tr";
+
+        Elements cardQuantities = document.select(deckBaseQuery + " td.deck-col-qty");
+        Elements cards = document.select(deckBaseQuery + " td.deck-col-card > a");
+
+        for (int i = 0; i < cards.size(); i++) {
+            System.out.println(cardQuantities.get(i).text() + " " + cards.get(i).text());
+        }
     }
 
     /*
