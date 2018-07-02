@@ -1,24 +1,50 @@
 import mtg.MtgFormat;
 import service.MtgGoldfishParser;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Driver {
     public static void main(String[] args) {
         String filePath = null;
-        //NOTE: Enter your desired output file path here
-        //filePath = "Enter full file path here";
+
+        BufferedReader bufferedReader = null;
+        MtgFormat mtgFormat = null;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.println("Please enter a Mtg Format (e.g. Standard/Modern): ");
+            String input = bufferedReader.readLine();
+            mtgFormat = MtgFormat.valueOf(input.toUpperCase());
+
+            System.out.println("Would you like to output to a file path? (y/n): ");
+            input = bufferedReader.readLine();
+
+            if (input.equalsIgnoreCase("y")) {
+                System.out.println("Please enter the full file path: ");
+                filePath = bufferedReader.readLine();
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid value for MTG Format. Exiting.");
+            System.exit(-1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         if (filePath == null || filePath.length() < 1) {
-            System.out.println("Note: to download directly to text files, you can enter your desired file path in Driver.java");
-            System.out.println("If you do, a mtgutil directory will be created at the specified path and the deck files will be outputted there.");
-            System.out.println("Since this was not provided, defaulting to printing decks to console.");
+            System.out.println("Since file path was not provided, printing decks to console.");
         }
 
         try {
-            MtgFormat mtgFormat = MtgFormat.STANDARD;
-            //MtgFormat mtgFormat = MtgFormat.MODERN;
-            
             MtgGoldfishParser.parseTopDecks(mtgFormat, filePath);
         } catch (IOException e) {
             System.out.println("Failed to parse the top decks.");
