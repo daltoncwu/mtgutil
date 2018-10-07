@@ -8,7 +8,7 @@ public enum MtgFormat {
     VINTAGE,
     PENNY_DREADFUL,
     COMMANDER_1V1,
-    Commander,
+    COMMANDER,
     BRAWL,
     ARENA_STANDARD;
 
