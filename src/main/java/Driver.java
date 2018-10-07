@@ -16,7 +16,7 @@ public class Driver {
 
             System.out.println("Please enter a Mtg Format (e.g. Standard/Modern): ");
             String input = bufferedReader.readLine();
-            mtgFormat = MtgFormat.valueOf(input.toUpperCase());
+            mtgFormat = MtgFormat.getEnum(input);
 
             System.out.println("Would you like to output to a file path? (y/n): ");
             input = bufferedReader.readLine();
