@@ -127,7 +127,7 @@ public class MtgGoldfishParser {
         }
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        String outputDirectory = String.format(filePath + "/mtgutil-%s-%s", mtgFormat, timestamp);
+        String outputDirectory = String.format("%s/mtgutil-%s-%s", filePath, mtgFormat, timestamp);
         new File(outputDirectory).mkdirs();
         return outputDirectory;
     }
