@@ -127,19 +127,19 @@ public class MtgGoldfishParser {
         }
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        String outputDirectory = String.format(filePath + "/mtgutil-%s-%s", mtgFormat, timestamp);
+        String outputDirectory = String.format("%s/mtgutil-%s-%s", filePath, mtgFormat, timestamp);
         new File(outputDirectory).mkdirs();
         return outputDirectory;
     }
 
     private static String generateCardLine(String quantity, String cardName, boolean isSideboard) {
-        String line = "";
+        StringBuilder cardLine = new StringBuilder();
         if (isSideboard) {
-            line = line + SIDEBOARD_PREFIX;
+            cardLine.append(SIDEBOARD_PREFIX);
         }
-        line = line + quantity + " " + cardName;
+        cardLine.append(quantity).append(" ").append(cardName);
 
-        return line;
+        return cardLine.toString();
     }
 
     /*
