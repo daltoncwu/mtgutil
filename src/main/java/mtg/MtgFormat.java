@@ -18,6 +18,6 @@ public enum MtgFormat {
     }
 
     public String toString() {
-        return this.name().toLowerCase();
+        return this.name().replace("_", " ").toLowerCase();
     }
 }
