@@ -133,13 +133,13 @@ public class MtgGoldfishParser {
     }
 
     private static String generateCardLine(String quantity, String cardName, boolean isSideboard) {
-        String line = "";
+        StringBuilder cardLine = new StringBuilder();
         if (isSideboard) {
-            line = line + SIDEBOARD_PREFIX;
+            cardLine.append(SIDEBOARD_PREFIX);
         }
-        line = line + quantity + " " + cardName;
+        cardLine.append(quantity).append(" ").append(cardName);
 
-        return line;
+        return cardLine.toString();
     }
 
     /*
